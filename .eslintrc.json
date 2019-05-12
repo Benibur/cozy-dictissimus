@@ -1,0 +1,6 @@
+{
+  "extends": ["cozy-app/react"],
+  "rules":{
+    "prettier/prettier": "off"
+  }
+}
