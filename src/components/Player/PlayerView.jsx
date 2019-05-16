@@ -1,5 +1,7 @@
 import React, { Component }         from 'react'
 import Question_write_heard_words   from './Question_write_heard_words'
+import { Chip  }                    from 'cozy-ui/react/'
+import { Button }                   from 'cozy-ui/react/Button'
 
 const GIFS = ['Obama.gif','Shadok-pas-de-solution-pas-de-problème.gif','bear.gif','bugbunny.gif','cat and cofee.gif','chat-chapeau.gif','dance-boy.gif','dance.gif','dancing-grandma.gif','giphy.gif','glimpse.gif','hooowww.gif','karate.gif','marin.gif','ninja.gif','office-space-that-was-easy.gif','puppet.gif','robot-dance.gif','weldone-01.gif','weldone-02.gif','weldone-03.gif','weldone-04.gif','weldone-05.gif','weldone-06.gif','weldone-07.gif','weldone-08.gif','weldone-09.gif','weldone-10.gif','weldone-11.gif','weldone-12.gif','weldone-13.gif','weldone-14.gif','weldone-15.gif','weldone-16.gif','weldone-17.gif','yourtheman.gif']
 
@@ -7,7 +9,7 @@ const GIFS = ['Obama.gif','Shadok-pas-de-solution-pas-de-problème.gif','bear.gi
 
 function WelldoneView() {
   return (
-    <div id='reward'>
+    <div id='reward' className="u-bg-grannyApple">
       <div>
         Du 1er coup !
       </div>
@@ -32,7 +34,7 @@ export default class PlayerView extends Component {
       currentKwldItem   : this.pickRandomItem()  ,
       numberOfQuestions : 0                      ,
       score             : 0                      ,
-      showFeedback      : false                  ,
+      showFeedback      : 'reward'                   ,
     }
   }
 
@@ -56,12 +58,13 @@ export default class PlayerView extends Component {
   ********************************************************************************/
   handleResult(result) {
     console.log('handleResult', result);
-    if (result.gonext) {
+    // if (result.gonext) {
+    if (true) {
       this.setState({
         currentKwldItem   : this.pickRandomItem(),
         numberOfQuestions : this.state.numberOfQuestions + 1,
         score             : this.state.score + result.score,
-        showFeedback        : result.showFeedback,
+        showFeedback      : result.showFeedback,
       })
       if (result.showFeedback) {
          setTimeout( () => {
@@ -71,7 +74,7 @@ export default class PlayerView extends Component {
       }
     }else {
       this.setState({
-        score             : this.state.score + result.score,
+        score : this.state.score + result.score,
       })
     }
   }
@@ -88,22 +91,36 @@ export default class PlayerView extends Component {
     // }
     return (
       <div className={`player-overlay `}>
-        <button
-          id     ='stopLessonBtn'
-          onClick={this.props.onStop}
-          >Stop ⏹
-        </button>
-        <div className="player-content">
-          <div className="player-card">
-            <div id='score'>Score = {this.state.score}</div>
-            <Question_write_heard_words
-              className = "question"
-              key = {this.state.numberOfQuestions}
-              knowledgeItem={this.state.currentKwldItem}
-              onResult     ={this.handleResult}
+        <div style={{width:'100%', display:'flex', justifyContent:'center'}}>
+          <div style={{width:'100%', maxWidth:'70rem'}}>
+            <Button
+              id        = "stopLessonBtn"
+              className = "u-m-2"
+              onClick   = {this.props.onStop}
+              label     = "Arrêter"
+              icon      = "arrow-left"
+              theme     = "text"
             />
           </div>
-          <div className="player-hist">Historique</div>
+        </div>
+
+        <div className="player-content">
+          <div className="player-card">
+            <Chip
+              id        = "score"
+              className = "u-bg-emerald u-white u-mr-2 u-h-2 u-mt-2"
+            >
+              {`Score = ${this.state.score}/${this.state.numberOfQuestions}`}
+            </Chip>
+            <Question_write_heard_words
+              className     = "question"
+              key           = {this.state.numberOfQuestions}
+              knowledgeItem = {this.state.currentKwldItem}
+              onResult      = {this.handleResult}
+            />
+          </div>
+
+          <div className="player-hist u-mt-2">Historique</div>
 
         {this.ResultModal()}
         </div>

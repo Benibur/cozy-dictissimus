@@ -52,7 +52,7 @@ class App extends Component {
   }
 
   componentDidMount(){
-    this.displayLessonPlayer(["knwl_69","knwl_70","knwl_71","knwl_72"])
+    // this.displayLessonPlayer(["knwl_13","knwl_17","knwl_22","knwl_29"])
   }
 
   getChildContext() {
@@ -60,6 +60,7 @@ class App extends Component {
   }
 
   displayLessonPlayer(items_id) {
+    console.log('displayLessonPlayer of kwledge items ', items_id);
     const items = items_id.map(id=>{
       return knowledgeItems.find(it=>it._id === id)
     })

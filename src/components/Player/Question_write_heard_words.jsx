@@ -3,6 +3,7 @@ import { Shortcuts }        from 'react-shortcuts'
 import NOK_sound            from 'assets/beeps/nok_sound.wav'
 import OK_sound             from 'assets/beeps/ok_sound.wav'
 import { Button }           from 'cozy-ui/react/Button'
+import { Input  }           from 'cozy-ui/react/'
 
 export default class Question_write_heard_words_View extends Component {
 
@@ -11,25 +12,26 @@ export default class Question_write_heard_words_View extends Component {
     super(props)
     this.handleShortcuts = this.handleShortcuts.bind(this)
     this.handleType      = this.handleType.bind(this)
+    this.playWord        = this.playWord.bind(this)
+    this.checkAnswer     = this.checkAnswer.bind(this)
     this.state = {
       currentAnswer       : null ,
       currentWrongAnswers : 0    ,
     }
-    this.playWord(this.props.knowledgeItem)
+    this.playWord()
   }
 
 
   handleType(e) {
-    console.log('handleType', e.target.value);
     this.setState({currentAnswer : e.target.value})
   }
 
 
   handleShortcuts(action, evt){
-    console.log('handleShortcuts', action);
+    // console.log('handleShortcuts', action);
     switch (action) {
       case 'REPEAT_WORD':
-        this.playWord(this.props.knowledgeItem)
+        this.playWord()
         break
       case 'SUBMIT':
         this.checkAnswer()
@@ -38,11 +40,11 @@ export default class Question_write_heard_words_View extends Component {
   }
 
 
-  playWord(knowledgeItem){
+  playWord(){
     // when we will plug the Audio on cozy.files :
     // https://stackoverflow.com/questions/32541898/convert-audio-data-uri-string-to-file
     // https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createBufferSource
-    // const {knowledgeItem} = this.props
+    const {knowledgeItem} = this.props
     const word_sound_asset = require('assets/sounds/' + knowledgeItem.soundFile)
     console.log('play :' + knowledgeItem.word, knowledgeItem.soundFile, word_sound_asset)
     const audio = new Audio(word_sound_asset)
@@ -112,23 +114,33 @@ export default class Question_write_heard_words_View extends Component {
           name              = 'QUESTION_WRITE_HEARD_WORDS'
           handler           = {this.handleShortcuts}
           alwaysFireHandler = {true}
-          className         = {className}
+          className         = {`${className} u-p-2-half`}
         >
+
           <div>Écris ce que tu entends</div>
-          <input className="Answer-input"
+
+          <Input
+            className   = "Answer-input u-mt-2-half"
             type        = "text"
-            placeholder = 'Alors ?   :-) '
+            placeholder = "Alors ?   :-) "
             autoFocus   = {true}
             onChange    = {this.handleType}
           />
-          <button
-            className = ""
-            onClick   = {this.listen}
-          >Vérifier</button>
-          <button
-            className = ""
-            onClick   = {this.listen}
-          >écouter à nouveau</button>
+
+          <Button
+            label     = "Vérifier"
+            className = "u-m-0 u-mt-2"
+            onClick   = {this.checkAnswer}
+          />
+
+          <Button
+            label     = "écouter à nouveau"
+            className = "u-m-0, u-mt-1"
+            onClick   = {this.playWord}
+            theme     = "text"
+            icon      = "sound"
+          />
+
         </Shortcuts>
       </>
     )

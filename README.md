@@ -13,6 +13,8 @@
 * trouver un remplaçant à combokeys :
   - https://www.npmjs.com/package/react-shortcuts : semble le mieux, le plus populaire
   - https://www.npmjs.com/package/react-keyboard-shortcuts syntaxe criptique pour moi
+* pb svg pour les levels
+* pb d'event de chkbox qui survient après le click de la div conteneur
 
 https://gyazo.com/600b1aabffc76f19868fa2f2a809ff9e
 https://gyazo.com/c8198acef0cb90e0ad2178204a1fd02f
