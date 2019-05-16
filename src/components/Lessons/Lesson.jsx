@@ -48,9 +48,17 @@ export default class Lesson extends Component {
         />
         <div
           className = "lesson-indicator"
-          style     = {{flexGrow:1}}
+          style     = {{
+            flexGrow       : 1       ,
+            display        : 'flex'  ,
+            justifyContent : 'center',
+          }}
         >
-          <Icon icon={level0}/>
+          <Icon
+            icon={level0}
+            width="5em"
+            height="auto"
+          />
         </div>
         <div style={{
             borderBottomRightRadius : '4px',
