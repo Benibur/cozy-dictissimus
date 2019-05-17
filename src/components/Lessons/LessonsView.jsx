@@ -76,8 +76,19 @@ export default class LessonsView extends Component {
           }}
         >
           <Checkbox
-            label = {`${course.level} ${course.subject} ${course.teacherName} - ${course.year}`}
+            label     = {`${course.level} ${course.subject} ${course.teacherName} - ${course.year}`}
             className = "u-mb-0"
+            onChange  = {(evt)=>{
+              const selectedLessons = new Set(this.state.selectedLessons)
+              course.lessons_id.forEach(id=>{
+                if (evt.target.checked) {
+                  selectedLessons.add(id)
+                } else {
+                  selectedLessons.delete(id)
+                }
+                this.setState({selectedLessons})
+              })
+            }}
           />
 
           <Button
@@ -90,9 +101,11 @@ export default class LessonsView extends Component {
         { this.renderCourseLessons(course.lessons_id) }
       </div>
     )
+
     console.log("render LessonsView()", this.state.selectedLessons.length);
     return (
       <>
+
         <div className="lessons-header">
           <Button
             className = "run-selected-training"
@@ -102,9 +115,11 @@ export default class LessonsView extends Component {
             onClick   = {this.handleTrainingClick}
           />
         </div>
+
         <div className="lessons-list">
           {classCourses}
         </div>
+
       </>
     )
   }

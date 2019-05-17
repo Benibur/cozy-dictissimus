@@ -98,7 +98,7 @@ export default class PlayerView extends Component {
               className = "u-m-2"
               onClick   = {this.props.onStop}
               label     = "Arrêter"
-              icon      = "arrow-left"
+              icon      = "previous"
               theme     = "text"
             />
           </div>

@@ -12,24 +12,14 @@ export default class Lesson extends Component {
   }
 
   handleCheck(evt) {
-      console.log('handleCheck !!!', evt.target.checked)
       this.props.onSelectChg(this.props.lessonData._id, evt.target.checked)
-      evt.preventDefault()
-      evt.stopPropagation()
-      evt.nativeEvent.stopImmediatePropagation()
-  }
-
-  handleCheckClick(evt) {
-    console.log("handleCheckClick");
-    evt.stopPropagation()
-    evt.preventDefault()
-    evt.nativeEvent.stopImmediatePropagation()
   }
 
   handleClickPlay(evt){
-    console.log("handleClickPlay", evt.target);
-    if (evt.target) {
-
+    const target = evt.target
+    if (target.type==='checkbox' || (target.previousSibling && target.previousSibling.type === 'checkbox')) {
+      console.log("click in checkbox");
+      return true
     }
     this.props.handleDisplayRunner(this.props.lessonData.knowledgeItems_id)
   }
