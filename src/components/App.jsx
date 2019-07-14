@@ -53,6 +53,7 @@ class App extends Component {
 
   componentDidMount(){
     // this.displayLessonPlayer(["knwl_13","knwl_17","knwl_22","knwl_29"])
+    this.displayLessonPlayer(["knwl_13"])
   }
 
   getChildContext() {

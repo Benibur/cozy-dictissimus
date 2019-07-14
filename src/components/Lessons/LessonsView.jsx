@@ -53,7 +53,7 @@ export default class LessonsView extends Component {
       return (
         <Lesson
           key                 = {id}
-          handleDisplayRunner = {this.props.displayLessonPlayer}
+          onDisplayPlayer     = {this.props.displayLessonPlayer}
           onSelectChg         = {this.changeSelection}
           lessonData          = {lessonData}
           isSelected          = {this.state.selectedLessons.has(id)}
@@ -78,6 +78,14 @@ export default class LessonsView extends Component {
           <Checkbox
             label     = {`${course.level} ${course.subject} ${course.teacherName} - ${course.year}`}
             className = "u-mb-0"
+            checked = {(()=>{
+              for (let id of course.lessons_id) {
+                if (!this.state.selectedLessons.has(id)) {
+                  return false
+                }
+              }
+              return true
+            })()}
             onChange  = {(evt)=>{
               const selectedLessons = new Set(this.state.selectedLessons)
               course.lessons_id.forEach(id=>{
@@ -102,7 +110,7 @@ export default class LessonsView extends Component {
       </div>
     )
 
-    console.log("render LessonsView()", this.state.selectedLessons.length);
+    console.log("render LessonsView()", this.state.selectedLessons.size);
     return (
       <>
 
@@ -111,7 +119,7 @@ export default class LessonsView extends Component {
             className = "run-selected-training"
             label     = "S'entrainer ▶"
             icon      = "play"
-            disabled  = {(this.state.selectedLessons.length === 0)}
+            disabled  = {(this.state.selectedLessons.size === 0)}
             onClick   = {this.handleTrainingClick}
           />
         </div>

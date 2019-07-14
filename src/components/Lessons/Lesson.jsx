@@ -21,7 +21,7 @@ export default class Lesson extends Component {
       console.log("click in checkbox");
       return true
     }
-    this.props.handleDisplayRunner(this.props.lessonData.knowledgeItems_id)
+    this.props.onDisplayPlayer(this.props.lessonData.knowledgeItems_id)
   }
   render(){
     const {lessonData} = this.props

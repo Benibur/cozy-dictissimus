@@ -5,7 +5,7 @@ import { Button }                   from 'cozy-ui/react/Button'
 
 const GIFS = ['Obama.gif','Shadok-pas-de-solution-pas-de-problème.gif','bear.gif','bugbunny.gif','cat and cofee.gif','chat-chapeau.gif','dance-boy.gif','dance.gif','dancing-grandma.gif','giphy.gif','glimpse.gif','hooowww.gif','karate.gif','marin.gif','ninja.gif','office-space-that-was-easy.gif','puppet.gif','robot-dance.gif','weldone-01.gif','weldone-02.gif','weldone-03.gif','weldone-04.gif','weldone-05.gif','weldone-06.gif','weldone-07.gif','weldone-08.gif','weldone-09.gif','weldone-10.gif','weldone-11.gif','weldone-12.gif','weldone-13.gif','weldone-14.gif','weldone-15.gif','weldone-16.gif','weldone-17.gif','yourtheman.gif']
 
-
+var showFeedbackTimeout = null
 
 function WelldoneView() {
   return (
@@ -32,9 +32,11 @@ export default class PlayerView extends Component {
     this.handleResult = this.handleResult.bind(this)
     this.state = {
       currentKwldItem   : this.pickRandomItem()  ,
+      numberOfResults   : 0                      ,
       numberOfQuestions : 0                      ,
       score             : 0                      ,
-      showFeedback      : 'reward'                   ,
+      showFeedback      : false                  ,
+      // showFeedback      : 'reward'                   ,
     }
   }
 
@@ -58,37 +60,49 @@ export default class PlayerView extends Component {
   ********************************************************************************/
   handleResult(result) {
     console.log('handleResult', result);
-    // if (result.gonext) {
-    if (true) {
+    // if (true) {
+    if (result.gonext) {
       this.setState({
-        currentKwldItem   : this.pickRandomItem(),
-        numberOfQuestions : this.state.numberOfQuestions + 1,
-        score             : this.state.score + result.score,
-        showFeedback      : result.showFeedback,
+        currentKwldItem   : this.pickRandomItem()               ,
+        numberOfResults   : this.state.numberOfResults + 1      ,
+        numberOfQuestions : this.state.numberOfQuestions + 1    ,
+        score             : this.state.score + result.score     ,
+        showFeedback      : result.showFeedback                 ,
       })
       if (result.showFeedback) {
-         setTimeout( () => {
+        if (showFeedbackTimeout) {
+          clearTimeout(showFeedbackTimeout)
+          showFeedbackTimeout = null
+        }
+        showFeedbackTimeout = setTimeout( () => {
           console.log("timeout showFeedback");
           this.setState({showFeedback: false})
-        },2000)
+          showFeedbackTimeout = null
+        },4000)
       }
     }else {
+      if (showFeedbackTimeout) {
+        clearTimeout(showFeedbackTimeout)
+        showFeedbackTimeout = null
+      }
       this.setState({
-        score : this.state.score + result.score,
+        score           : this.state.score + result.score ,
+        numberOfResults : this.state.numberOfResults + 1  ,
+        showFeedback    : result.showFeedback             ,
       })
+    }
+  }
+
+  componentWillUnmount(){
+    if (showFeedbackTimeout) {
+      console.log('componentWillUnmount',showFeedbackTimeout);
+      clearTimeout(showFeedbackTimeout)
+      showFeedbackTimeout = null
     }
   }
 
   render(){
     const { isPlayerOn, itemsForPlayer } = this.props
-    // detect if the items_ids have changed, if yes pick a new item
-    // if (this.state.items_id !==this.props.items_id) {
-    //   this.setState({
-    //     currentKwldItem : this.pickRandomItem(),
-    //     items_id        : this.props.items_id,
-    //   })
-    //   // interrupt here the render process to avoid a double render
-    // }
     return (
       <div className={`player-overlay `}>
         <div style={{width:'100%', display:'flex', justifyContent:'center'}}>
@@ -110,7 +124,7 @@ export default class PlayerView extends Component {
               id        = "score"
               className = "u-bg-emerald u-white u-mr-2 u-h-2 u-mt-2"
             >
-              {`Score = ${this.state.score}/${this.state.numberOfQuestions}`}
+              {`Score = ${this.state.score}/${this.state.numberOfResults}`}
             </Chip>
             <Question_write_heard_words
               className     = "question"
@@ -138,6 +152,9 @@ export default class PlayerView extends Component {
         break;
       case 'ok-after-retry':
         return <div id='feedback'>Pas mal ! la réponse était bien {}, la prochaine fois tu l'auras du 1er coup :-)</div>
+        break;
+      case 'nok':
+        return <div id='feedback'>La bonne réponse était {}</div>
         break;
       default:
 

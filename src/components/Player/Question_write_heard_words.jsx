@@ -10,13 +10,15 @@ export default class Question_write_heard_words_View extends Component {
 
   constructor(props){
     super(props)
-    this.handleShortcuts = this.handleShortcuts.bind(this)
-    this.handleType      = this.handleType.bind(this)
-    this.playWord        = this.playWord.bind(this)
-    this.checkAnswer     = this.checkAnswer.bind(this)
+    this.handleShortcuts        = this.handleShortcuts.bind(this)
+    this.handleType             = this.handleType.bind(this)
+    this.handleCorrectionGoNext = this.handleCorrectionGoNext.bind(this)
+    this.playWord               = this.playWord.bind(this)
+    this.checkAnswer            = this.checkAnswer.bind(this)
     this.state = {
       currentAnswer       : null ,
       currentWrongAnswers : 0    ,
+      displayCorrection   : false,
     }
     this.playWord()
   }
@@ -39,12 +41,21 @@ export default class Question_write_heard_words_View extends Component {
     }
   }
 
+  handleCorrectionGoNext(){
+    this.props.onResult({
+      gonext       : true  ,
+      score        : 0     ,
+      showFeedback : false ,
+    })
+  }
+
 
   playWord(){
     // when we will plug the Audio on cozy.files :
     // https://stackoverflow.com/questions/32541898/convert-audio-data-uri-string-to-file
     // https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/createBufferSource
     const {knowledgeItem} = this.props
+    console.log('playWord', knowledgeItem.word );
     const word_sound_asset = require('assets/sounds/' + knowledgeItem.soundFile)
     console.log('play :' + knowledgeItem.word, knowledgeItem.soundFile, word_sound_asset)
     const audio = new Audio(word_sound_asset)
@@ -70,35 +81,36 @@ export default class Question_write_heard_words_View extends Component {
 
   checkAnswer() {
     const {knowledgeItem} = this.props
-    const {currentAnswer} = this.state
+    const {currentAnswer, currentWrongAnswers} = this.state
     console.log('checkAnswer', currentAnswer, knowledgeItem.word);
     if (!currentAnswer ) return
     if (currentAnswer === knowledgeItem.word){
-      console.log("Answer ok !")
+      console.log("Answer ok !", currentWrongAnswers, )
       this.playSound('ok')
       this.props.onResult({
-        gonext     : true,
-        score      : 1   ,
-        playReward : true,
+        gonext       : true     ,
+        score        : 1        ,
+        showFeedback : currentWrongAnswers ? 'ok-after-retry' : 'reward' ,
       })
     }else {
       console.log("Answer NOK !")
       this.playSound('Nok')
-      if (this.state.currentWrongAnswers === 0) {
+      if (currentWrongAnswers === 0) {
         console.log("try again");
         this.setState({currentWrongAnswers:1})
         this.props.onResult({
-          gonext: true ,
-          score : 0     ,
-          playReward : true,
+          gonext       : false ,
+          score        : 0     ,
+          showFeedback : false ,
         })
       }else {
         console.log("lost, the right answer is", knowledgeItem.word)
-        this.props.onResult({
-          gonext: true,
-          score : 0   ,
-          playReward : true,
-        })
+        this.setState({displayCorrection:true})
+        // this.props.onResult({
+        //   gonext       : true  ,
+        //   score        : 0     ,
+        //   showFeedback : false ,
+        // })
       }
     }
   }
@@ -106,16 +118,27 @@ export default class Question_write_heard_words_View extends Component {
 
   render(){
     const { className } = this.props
-    // detect if the lessons_ids have changed, if yes,
-    return (
-      <>
+    if (this.state.displayCorrection) {
+      return(
+        <div className="question u-p-2-half">
 
+          <div>{`La réponse était ${this.props.knowledgeItem.word}`}</div>
+          <Button
+            label     = "Continuer"
+            onClick   = {this.handleCorrectionGoNext}
+            autofocus = "true"
+          />
+      </div>
+      )
+    } else {
+
+      return (
         <Shortcuts
           name              = 'QUESTION_WRITE_HEARD_WORDS'
           handler           = {this.handleShortcuts}
           alwaysFireHandler = {true}
           className         = {`${className} u-p-2-half`}
-        >
+          >
 
           <div>Écris ce que tu entends</div>
 
@@ -125,13 +148,13 @@ export default class Question_write_heard_words_View extends Component {
             placeholder = "Alors ?   :-) "
             autoFocus   = {true}
             onChange    = {this.handleType}
-          />
+            />
 
           <Button
             label     = "Vérifier"
             className = "u-m-0 u-mt-2"
             onClick   = {this.checkAnswer}
-          />
+            />
 
           <Button
             label     = "écouter à nouveau"
@@ -139,10 +162,10 @@ export default class Question_write_heard_words_View extends Component {
             onClick   = {this.playWord}
             theme     = "text"
             icon      = "sound"
-          />
+            />
 
         </Shortcuts>
-      </>
     )
+    }
   }
 }
