@@ -48,7 +48,7 @@
     "cozy-scripts": "1.12.2",
     "cozy-ui": "^19.33.2",
     "eslint-config-cozy-app": "1.1.8",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "react": "16.8.1",
     "react-dom": "16.8.1",
     "react-router-dom": "4.3.1",
